@@ -86,7 +86,7 @@ class RAdapter(private val dataList: MutableList<*>) : RecyclerView.Adapter<RVie
             val holder = holderWrap.holder
             holder.setPosition(position)
             holder.setData(dataList[position])
-            holder.refresh()
+            holder.onBind()
         } catch (e: Throwable) {
             Log.e(TAG, "bind view holder error", e)
         }
