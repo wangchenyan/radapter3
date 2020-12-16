@@ -6,7 +6,7 @@ import me.wcy.radapter3.RViewHolder
 
 class ImageViewHolder(private val viewBinding: ViewHolderImageBinding) : RViewHolder<ViewHolderImageBinding, Image>(viewBinding) {
 
-    override fun onBindViewHolder() {
+    override fun refresh() {
         /**
          * 可以取得 adapter.putExtra() 存放的数据
          */

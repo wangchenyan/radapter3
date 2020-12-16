@@ -64,7 +64,7 @@ abstract class RViewHolder<VB : ViewBinding, T>(internal val viewBinding: VB) {
     /**
      * 刷新界面
      */
-    abstract fun onBindViewHolder()
+    abstract fun refresh()
 
     /**
      * 获取 adapter.putExtra 设置的额外参数
