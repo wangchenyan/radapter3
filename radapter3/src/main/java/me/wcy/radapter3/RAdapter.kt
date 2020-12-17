@@ -76,9 +76,9 @@ class RAdapter(private val dataList: MutableList<*>) : RecyclerView.Adapter<RVie
     private inline fun <reified VB : ViewBinding, T> createViewHolder(holderClass: Class<RViewHolder<VB, T>>, parent: ViewGroup): RViewHolder<VB, T> {
         val bindingClass = (holderClass.genericSuperclass as ParameterizedType).actualTypeArguments[0] as Class<*>
         val inflateMethod = bindingClass.getMethod("inflate", LayoutInflater::class.java, ViewGroup::class.java, Boolean::class.javaPrimitiveType)
-        val viewBinding = inflateMethod.invoke(null, LayoutInflater.from(parent.context), parent, false) as VB
+        val binding = inflateMethod.invoke(null, LayoutInflater.from(parent.context), parent, false) as VB
         val constructor = holderClass.getConstructor(bindingClass)
-        return constructor.newInstance(viewBinding)
+        return constructor.newInstance(binding)
     }
 
     override fun onBindViewHolder(holderWrap: RViewHolderWrap, position: Int) {

@@ -6,8 +6,8 @@ import androidx.viewbinding.ViewBinding
 /**
  * ViewHolder 基类
  */
-abstract class RViewHolder<VB : ViewBinding, T>(internal val viewBinding: VB) {
-    protected val context: Context = viewBinding.root.context
+abstract class RViewHolder<VB : ViewBinding, T>(internal val binding: VB) {
+    protected val context: Context = binding.root.context
     private var adapter: RAdapter? = null
     private var data: T? = null
     private var position = -1
