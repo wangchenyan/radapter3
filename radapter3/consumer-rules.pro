@@ -1,5 +1,5 @@
 -keepclassmembers class * extends me.wcy.radapter3.RViewHolder {
-    public <init>(androidx.viewbinding.ViewBinding);
+    public <init>(*);
 }
 -keepclassmembers class * implements androidx.viewbinding.ViewBinding {
   public static * inflate(android.view.LayoutInflater);
