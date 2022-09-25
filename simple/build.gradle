@@ -1,17 +1,15 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion Integer.parseInt(COMPILE_SDK_VERSION)
-    buildToolsVersion BUILD_TOOLS_VERSION
 
     defaultConfig {
         applicationId "me.wcy.radapter3.simple"
         minSdkVersion 15
-        targetSdkVersion 28
-        versionCode Integer.parseInt(VERSION_CODE)
-        versionName VERSION_NAME
+        targetSdkVersion 33
+        versionCode 1
+        versionName "1.0"
     }
 
     buildTypes {
@@ -27,9 +25,8 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation project(':radapter3')
 }

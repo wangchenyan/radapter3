@@ -1,13 +1,14 @@
 package me.wcy.radapter3
 
 /**
- * 一个列表 item 的实体，包含数据类型和 ViewHolder
+ * 一个列表 item 的实体，包含数据类型和 ViewBinder
  *
  * Created by wangchenyan on 2018/9/21.
  */
 internal class RType<T>(
-        internal val model: Class<T>,
-        internal val converter: (data: T) -> Class<out RViewHolder<*, T>>) {
+    internal val model: Class<T>,
+    internal val mapper: (data: T) -> RViewBinder<*, T>
+) {
 
     override fun hashCode(): Int {
         return model.hashCode()

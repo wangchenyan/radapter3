@@ -1,29 +1,13 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
-    }
-}
-
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-apply plugin: 'com.github.dcendents.android-maven'
-
-group = 'com.github.wangchenyan'
+apply plugin: "maven-publish"
 
 android {
     compileSdkVersion Integer.parseInt(COMPILE_SDK_VERSION)
-    buildToolsVersion BUILD_TOOLS_VERSION
 
     defaultConfig {
         minSdkVersion 9
-        targetSdkVersion 28
-        versionCode Integer.parseInt(VERSION_CODE)
-        versionName VERSION_NAME
+        targetSdkVersion 33
 
         consumerProguardFiles 'consumer-rules.pro'
     }
@@ -33,9 +17,18 @@ android {
     }
 }
 
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+            }
+        }
+    }
+}
+
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    compileOnly 'androidx.appcompat:appcompat:1.2.0'
-    compileOnly 'androidx.recyclerview:recyclerview:1.1.0'
+    compileOnly 'androidx.appcompat:appcompat:1.5.1'
+    compileOnly 'androidx.recyclerview:recyclerview:1.2.1'
 }
