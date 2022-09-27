@@ -9,7 +9,7 @@ import kotlin.reflect.KClass
  * Created by wangchenyan.top on 2022/9/25.
  */
 abstract class RViewBinder<VB : ViewBinding, T> {
-    abstract val viewBindingClazz: KClass<VB>
+    internal lateinit var viewBindingClazz: KClass<*>
     lateinit var adapter: RAdapter<*>
 
     fun onCreateViewHolder(parent: ViewGroup): ViewBindingHolder<VB> {

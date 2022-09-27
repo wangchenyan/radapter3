@@ -4,6 +4,7 @@ import android.util.Log
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
+import kotlin.reflect.KClass
 
 /**
  * 支持多种类型的 RecyclerView Adapter
@@ -17,8 +18,16 @@ class RAdapter<T> : RecyclerView.Adapter<ViewBindingHolder<*>>() {
      *
      * @param viewBinder 视图绑定器
      */
-    inline fun <VB : ViewBinding, reified D> register(viewBinder: RViewBinder<VB, D>): RAdapter<T> {
-        register(D::class.java) { viewBinder }
+    inline fun <reified VB : ViewBinding, reified D> register(viewBinder: RViewBinder<VB, D>): RAdapter<T> {
+        register(D::class.java, object : RTypeMapper<D> {
+            override fun mapViewBinder(data: D): RViewBinder<out ViewBinding, D> {
+                return viewBinder
+            }
+
+            override fun mapViewBindingClazz(data: D): KClass<out ViewBinding> {
+                return VB::class
+            }
+        })
         return this
     }
 
@@ -26,10 +35,11 @@ class RAdapter<T> : RecyclerView.Adapter<ViewBindingHolder<*>>() {
      * 注册 ViewBinder
      *
      * @param model 数据类型
-     * @param mapper 数据到 [RViewBinder] 的映射，支持一种数据对应多种 View。注意：映射方法会多次调用，如果要做到性能最优，建议复用 [RViewBinder]，不要每次都重新构造。
+     * @param mapper 数据到 [RViewBinder] 的映射，支持一种数据对应多种 View
      */
     fun <D> register(
-        model: Class<D>, mapper: (data: D) -> RViewBinder<*, D>
+        model: Class<D>,
+        mapper: RTypeMapper<D>
     ): RAdapter<T> {
         typePool.register(model, mapper)
         return this

@@ -7,12 +7,17 @@ package me.wcy.radapter3
  */
 internal class RTypePool {
     private val typeList by lazy { mutableListOf<RType<*>>() }
-    private val viewBinderList by lazy { mutableListOf<RViewBinder<*, *>>() }
+    private val viewBinderList: MutableList<RViewBinder<*, *>> by lazy {
+        mutableListOf()
+    }
 
     /**
      * 注册一个实体
      */
-    fun <T> register(model: Class<T>, mapper: (data: T) -> RViewBinder<*, T>) {
+    fun <T> register(
+        model: Class<T>,
+        mapper: RTypeMapper<T>
+    ) {
         val type = RType(model, mapper)
         val index = typeList.indexOf(type)
         if (index >= 0) {
@@ -30,10 +35,10 @@ internal class RTypePool {
             return -1
         }
         val clazz = data.javaClass
-        var mapper: ((data: Any) -> RViewBinder<*, *>)? = null
+        var mapper: RTypeMapper<Any>? = null
         for (type in typeList) {
             if (clazz == type.model) {
-                mapper = type.mapper as (data: Any) -> RViewBinder<*, *>
+                mapper = type.mapper as RTypeMapper<Any>
                 break
             }
         }
@@ -41,7 +46,7 @@ internal class RTypePool {
             // 尝试查找子类
             for (type in typeList) {
                 if (type.model.isAssignableFrom(clazz)) {
-                    mapper = type.mapper as (data: Any) -> RViewBinder<*, *>
+                    mapper = type.mapper as RTypeMapper<Any>
                     break
                 }
             }
@@ -49,10 +54,11 @@ internal class RTypePool {
         if (mapper == null) {
             return -1
         }
-        // TODO 避免 invoke 多次创建 ViewBinder 实例
-        val viewBinder = mapper.invoke(data)
+        // TODO 避免多次创建 ViewBinder 实例
+        val viewBinder = mapper.mapViewBinder(data)
         var exist = viewBinderList.find { it.javaClass == viewBinder.javaClass }
         if (exist == null) {
+            viewBinder.viewBindingClazz = mapper.mapViewBindingClazz(data)
             viewBinderList.add(viewBinder)
             exist = viewBinder
         }

@@ -6,11 +6,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewbinding.ViewBinding
 import me.wcy.radapter.simple.R
 import me.wcy.radapter.simple.databinding.ViewHolderImageBinding
 import me.wcy.radapter.simple.databinding.ViewHolderText1Binding
 import me.wcy.radapter.simple.databinding.ViewHolderText2Binding
 import me.wcy.radapter3.RAdapter
+import me.wcy.radapter3.RTypeMapper
 import me.wcy.radapter3.RViewBinder
 import kotlin.reflect.KClass
 
@@ -40,13 +42,23 @@ class MainActivity : AppCompatActivity() {
         adapter.register(ImageViewBinder())
         val textViewBinder1 = TextViewBinder1()
         val textViewBinder2 = TextViewBinder2()
-        adapter.register(Text::class.java) { data ->
-            when (data.style) {
-                1 -> textViewBinder1
-                2 -> textViewBinder2
-                else -> textViewBinder2
+        adapter.register(Text::class.java, object : RTypeMapper<Text> {
+            override fun mapViewBinder(data: Text): RViewBinder<out ViewBinding, Text> {
+                return when (data.style) {
+                    1 -> textViewBinder1
+                    2 -> textViewBinder2
+                    else -> textViewBinder2
+                }
             }
-        }
+
+            override fun mapViewBindingClazz(data: Text): KClass<out ViewBinding> {
+                return when (data.style) {
+                    1 -> ViewHolderText1Binding::class
+                    2 -> ViewHolderText2Binding::class
+                    else -> ViewHolderText2Binding::class
+                }
+            }
+        })
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
@@ -59,27 +71,18 @@ class MainActivity : AppCompatActivity() {
     data class Image(val resId: Int)
 
     class ImageViewBinder : RViewBinder<ViewHolderImageBinding, Image>() {
-        override val viewBindingClazz: KClass<ViewHolderImageBinding>
-            get() = ViewHolderImageBinding::class
-
         override fun onBind(viewBinding: ViewHolderImageBinding, item: Image, position: Int) {
             viewBinding.image.setImageResource(item.resId)
         }
     }
 
     class TextViewBinder1 : RViewBinder<ViewHolderText1Binding, Text>() {
-        override val viewBindingClazz: KClass<ViewHolderText1Binding>
-            get() = ViewHolderText1Binding::class
-
         override fun onBind(viewBinding: ViewHolderText1Binding, item: Text, position: Int) {
             viewBinding.text1.text = item.text
         }
     }
 
     class TextViewBinder2 : RViewBinder<ViewHolderText2Binding, Text>() {
-        override val viewBindingClazz: KClass<ViewHolderText2Binding>
-            get() = ViewHolderText2Binding::class
-
         override fun onBind(viewBinding: ViewHolderText2Binding, item: Text, position: Int) {
             viewBinding.text2.text = item.text
             viewBinding.text2.setOnClickListener {

@@ -7,7 +7,7 @@ package me.wcy.radapter3
  */
 internal class RType<T>(
     internal val model: Class<T>,
-    internal val mapper: (data: T) -> RViewBinder<*, T>
+    internal val mapper: RTypeMapper<T>
 ) {
 
     override fun hashCode(): Int {
