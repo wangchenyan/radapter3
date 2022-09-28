@@ -10,7 +10,7 @@ import kotlin.reflect.KClass
  */
 abstract class RViewBinder<VB : ViewBinding, T> {
     internal lateinit var viewBindingClazz: KClass<*>
-    lateinit var adapter: RAdapter<*>
+    lateinit var adapter: RAdapter<Any>
 
     fun onCreateViewHolder(parent: ViewGroup): ViewBindingHolder<VB> {
         val inflateMethod = viewBindingClazz.java.getMethod(

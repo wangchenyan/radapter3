@@ -124,7 +124,7 @@ class RAdapter<T> : RecyclerView.Adapter<ViewBindingHolder<*>>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewBindingHolder<*> {
         val viewBinder = typePool.getViewBinder(viewType)
-        viewBinder.adapter = this
+        viewBinder.adapter = this as RAdapter<Any>
         return viewBinder.onCreateViewHolder(parent)
     }
 
