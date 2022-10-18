@@ -12,6 +12,9 @@ abstract class RViewBinder<VB : ViewBinding, T> {
     private var viewBindingClazz: KClass<*>? = null
     lateinit var adapter: RAdapter<Any>
 
+    /**
+     * 如果使用 [RTypeMapper] 映射 [RViewBinder]，请务必复写该方法！
+     */
     open fun getViewBindingClazz(): KClass<*> {
         if (viewBindingClazz == null) {
             throw IllegalStateException(
