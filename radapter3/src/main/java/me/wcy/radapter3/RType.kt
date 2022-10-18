@@ -1,12 +1,14 @@
 package me.wcy.radapter3
 
+import kotlin.reflect.KClass
+
 /**
  * 一个列表 item 的实体，包含数据类型和 ViewBinder
  *
  * Created by wangchenyan on 2018/9/21.
  */
-internal class RType<T>(
-    internal val model: Class<T>,
+internal class RType<T : Any>(
+    internal val model: KClass<T>,
     internal val mapper: RTypeMapper<T>
 ) {
 

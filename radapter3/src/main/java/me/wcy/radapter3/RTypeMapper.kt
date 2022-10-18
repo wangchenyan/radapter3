@@ -9,5 +9,5 @@ import kotlin.reflect.KClass
  * 注意：映射方法会多次调用，如果要做到性能最优，建议复用 [RViewBinder]，不要每次都重新构造。
  */
 interface RTypeMapper<T> {
-    fun map(data: T): Pair<RViewBinder<out ViewBinding, T>, KClass<out ViewBinding>>
+    fun map(data: T): RViewBinder<out ViewBinding, T>
 }

@@ -18,13 +18,28 @@ class RAdapter<T> : RecyclerView.Adapter<ViewBindingHolder<*>>() {
      *
      * @param viewBinder 视图绑定器
      */
-    inline fun <reified VB : ViewBinding, reified D> register(viewBinder: RViewBinder<VB, D>): RAdapter<T> {
-        register(D::class.java, object : RTypeMapper<D> {
-            override fun map(data: D): Pair<RViewBinder<out ViewBinding, D>, KClass<out ViewBinding>> {
-                return Pair(viewBinder, VB::class)
+    inline fun <reified VB : ViewBinding, reified D : Any> register(viewBinder: RViewBinder<VB, D>) =
+        apply {
+            register(viewBinder, VB::class, D::class)
+        }
+
+    /**
+     * 注册 ViewBinder
+     *
+     * @param viewBinder 视图绑定器
+     */
+    fun <VB : ViewBinding, D : Any> register(
+        viewBinder: RViewBinder<VB, D>,
+        bindingClazz: KClass<VB>,
+        dataClazz: KClass<D>
+    ) = apply {
+        register(dataClazz, object : RTypeMapper<D> {
+            override fun map(data: D): RViewBinder<out ViewBinding, D> {
+                return viewBinder.apply {
+                    setViewBindingClazz(bindingClazz)
+                }
             }
         })
-        return this
     }
 
     /**
@@ -33,9 +48,8 @@ class RAdapter<T> : RecyclerView.Adapter<ViewBindingHolder<*>>() {
      * @param model 数据类型
      * @param mapper 数据到 [RViewBinder] 的映射，支持一种数据对应多种 View
      */
-    fun <D> register(model: Class<D>, mapper: RTypeMapper<D>): RAdapter<T> {
+    fun <D : Any> register(model: KClass<D>, mapper: RTypeMapper<D>) = apply {
         typePool.register(model, mapper)
-        return this
     }
 
     /**

@@ -40,14 +40,15 @@ class MainActivity : AppCompatActivity() {
 
         val adapter = RAdapter<Any>()
         adapter.register(ImageViewBinder())
-        val textViewBinder1 = TextViewBinder1()
-        val textViewBinder2 = TextViewBinder2()
-        adapter.register(Text::class.java, object : RTypeMapper<Text> {
-            override fun map(data: Text): Pair<RViewBinder<out ViewBinding, Text>, KClass<out ViewBinding>> {
+        adapter.register(Text::class, object : RTypeMapper<Text> {
+            val textViewBinder1 = TextViewBinder1()
+            val textViewBinder2 = TextViewBinder2()
+
+            override fun map(data: Text): RViewBinder<out ViewBinding, Text> {
                 return when (data.style) {
-                    1 -> Pair(textViewBinder1, ViewHolderText1Binding::class)
-                    2 -> Pair(textViewBinder2, ViewHolderText2Binding::class)
-                    else -> Pair(textViewBinder2, ViewHolderText2Binding::class)
+                    1 -> textViewBinder1
+                    2 -> textViewBinder2
+                    else -> textViewBinder2
                 }
             }
         })
@@ -72,6 +73,8 @@ class MainActivity : AppCompatActivity() {
         override fun onBind(viewBinding: ViewHolderText1Binding, item: Text, position: Int) {
             viewBinding.text1.text = item.text
         }
+
+        override fun getViewBindingClazz(): KClass<*> = ViewHolderText1Binding::class
     }
 
     class TextViewBinder2 : RViewBinder<ViewHolderText2Binding, Text>() {
@@ -82,5 +85,7 @@ class MainActivity : AppCompatActivity() {
                     .show()
             }
         }
+
+        override fun getViewBindingClazz(): KClass<*> = ViewHolderText2Binding::class
     }
 }

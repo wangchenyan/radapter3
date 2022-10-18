@@ -9,11 +9,26 @@ import kotlin.reflect.KClass
  * Created by wangchenyan.top on 2022/9/25.
  */
 abstract class RViewBinder<VB : ViewBinding, T> {
-    internal lateinit var viewBindingClazz: KClass<*>
+    private var viewBindingClazz: KClass<*>? = null
     lateinit var adapter: RAdapter<Any>
 
+    open fun getViewBindingClazz(): KClass<*> {
+        if (viewBindingClazz == null) {
+            throw IllegalStateException(
+                "viewBindingClazz can not be null!" +
+                        "\nIf you use 'RTypeMapper', place override 'getViewBindingClazz()' method from 'RViewBinder'" +
+                        ", and provide ViewBinding class"
+            )
+        }
+        return viewBindingClazz!!
+    }
+
+    internal fun setViewBindingClazz(clazz: KClass<*>) {
+        viewBindingClazz = clazz
+    }
+
     fun onCreateViewHolder(parent: ViewGroup): ViewBindingHolder<VB> {
-        val inflateMethod = viewBindingClazz.java.getMethod(
+        val inflateMethod = getViewBindingClazz().java.getMethod(
             "inflate",
             LayoutInflater::class.java,
             ViewGroup::class.java,

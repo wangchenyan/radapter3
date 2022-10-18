@@ -1,5 +1,7 @@
 package me.wcy.radapter3
 
+import kotlin.reflect.KClass
+
 /**
  * 列表 item 实体管理器
  *
@@ -14,8 +16,8 @@ internal class RTypePool {
     /**
      * 注册一个实体
      */
-    fun <T> register(
-        model: Class<T>,
+    fun <T : Any> register(
+        model: KClass<T>,
         mapper: RTypeMapper<T>
     ) {
         val type = RType(model, mapper)
@@ -34,10 +36,10 @@ internal class RTypePool {
         if (data == null) {
             return -1
         }
-        val clazz = data.javaClass
+        val dataClazz = data.javaClass
         var mapper: RTypeMapper<Any>? = null
         for (type in typeList) {
-            if (clazz == type.model) {
+            if (dataClazz == type.model.java) {
                 mapper = type.mapper as RTypeMapper<Any>
                 break
             }
@@ -45,7 +47,7 @@ internal class RTypePool {
         if (mapper == null) {
             // 尝试查找子类
             for (type in typeList) {
-                if (type.model.isAssignableFrom(clazz)) {
+                if (type.model.java.isAssignableFrom(dataClazz)) {
                     mapper = type.mapper as RTypeMapper<Any>
                     break
                 }
@@ -55,11 +57,9 @@ internal class RTypePool {
             return -1
         }
         // TODO 避免多次创建 ViewBinder 实例
-        val pair = mapper.map(data)
-        val viewBinder = pair.first
+        val viewBinder = mapper.map(data)
         var exist = viewBinderList.find { it.javaClass == viewBinder.javaClass }
         if (exist == null) {
-            viewBinder.viewBindingClazz = pair.second
             viewBinderList.add(viewBinder)
             exist = viewBinder
         }
