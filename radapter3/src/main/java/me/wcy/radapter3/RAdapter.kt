@@ -20,12 +20,8 @@ class RAdapter<T> : RecyclerView.Adapter<ViewBindingHolder<*>>() {
      */
     inline fun <reified VB : ViewBinding, reified D> register(viewBinder: RViewBinder<VB, D>): RAdapter<T> {
         register(D::class.java, object : RTypeMapper<D> {
-            override fun mapViewBinder(data: D): RViewBinder<out ViewBinding, D> {
-                return viewBinder
-            }
-
-            override fun mapViewBindingClazz(data: D): KClass<out ViewBinding> {
-                return VB::class
+            override fun map(data: D): Pair<RViewBinder<out ViewBinding, D>, KClass<out ViewBinding>> {
+                return Pair(viewBinder, VB::class)
             }
         })
         return this
@@ -37,10 +33,7 @@ class RAdapter<T> : RecyclerView.Adapter<ViewBindingHolder<*>>() {
      * @param model 数据类型
      * @param mapper 数据到 [RViewBinder] 的映射，支持一种数据对应多种 View
      */
-    fun <D> register(
-        model: Class<D>,
-        mapper: RTypeMapper<D>
-    ): RAdapter<T> {
+    fun <D> register(model: Class<D>, mapper: RTypeMapper<D>): RAdapter<T> {
         typePool.register(model, mapper)
         return this
     }

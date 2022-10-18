@@ -43,19 +43,11 @@ class MainActivity : AppCompatActivity() {
         val textViewBinder1 = TextViewBinder1()
         val textViewBinder2 = TextViewBinder2()
         adapter.register(Text::class.java, object : RTypeMapper<Text> {
-            override fun mapViewBinder(data: Text): RViewBinder<out ViewBinding, Text> {
+            override fun map(data: Text): Pair<RViewBinder<out ViewBinding, Text>, KClass<out ViewBinding>> {
                 return when (data.style) {
-                    1 -> textViewBinder1
-                    2 -> textViewBinder2
-                    else -> textViewBinder2
-                }
-            }
-
-            override fun mapViewBindingClazz(data: Text): KClass<out ViewBinding> {
-                return when (data.style) {
-                    1 -> ViewHolderText1Binding::class
-                    2 -> ViewHolderText2Binding::class
-                    else -> ViewHolderText2Binding::class
+                    1 -> Pair(textViewBinder1, ViewHolderText1Binding::class)
+                    2 -> Pair(textViewBinder2, ViewHolderText2Binding::class)
+                    else -> Pair(textViewBinder2, ViewHolderText2Binding::class)
                 }
             }
         })

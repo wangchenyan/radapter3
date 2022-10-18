@@ -55,10 +55,11 @@ internal class RTypePool {
             return -1
         }
         // TODO 避免多次创建 ViewBinder 实例
-        val viewBinder = mapper.mapViewBinder(data)
+        val pair = mapper.map(data)
+        val viewBinder = pair.first
         var exist = viewBinderList.find { it.javaClass == viewBinder.javaClass }
         if (exist == null) {
-            viewBinder.viewBindingClazz = mapper.mapViewBindingClazz(data)
+            viewBinder.viewBindingClazz = pair.second
             viewBinderList.add(viewBinder)
             exist = viewBinder
         }
