@@ -14,28 +14,28 @@ class RAdapter<T> : RecyclerView.Adapter<ViewBindingHolder<*>>() {
     private val typePool by lazy { RTypePool() }
 
     /**
-     * 注册 ViewBinder
+     * 注册 [RItemBinder]
      *
-     * @param viewBinder 视图绑定器
+     * @param itemBinder 视图绑定器
      */
-    inline fun <reified VB : ViewBinding, reified D : Any> register(viewBinder: RViewBinder<VB, D>) =
+    inline fun <reified VB : ViewBinding, reified D : Any> register(itemBinder: RItemBinder<VB, D>) =
         apply {
-            register(viewBinder, VB::class, D::class)
+            register(itemBinder, VB::class, D::class)
         }
 
     /**
-     * 注册 ViewBinder
+     * 注册 [RItemBinder]
      *
-     * @param viewBinder 视图绑定器
+     * @param itemBinder 视图绑定器
      */
     fun <VB : ViewBinding, D : Any> register(
-        viewBinder: RViewBinder<VB, D>,
+        itemBinder: RItemBinder<VB, D>,
         bindingClazz: KClass<VB>,
         dataClazz: KClass<D>
     ) = apply {
         register(dataClazz, object : RTypeMapper<D> {
-            override fun map(data: D): RViewBinder<out ViewBinding, D> {
-                return viewBinder.apply {
+            override fun map(data: D): RItemBinder<out ViewBinding, D> {
+                return itemBinder.apply {
                     setViewBindingClazz(bindingClazz)
                 }
             }
@@ -43,10 +43,10 @@ class RAdapter<T> : RecyclerView.Adapter<ViewBindingHolder<*>>() {
     }
 
     /**
-     * 注册 ViewBinder
+     * 注册 [RItemBinder]
      *
      * @param model 数据类型
-     * @param mapper 数据到 [RViewBinder] 的映射，支持一种数据对应多种 View
+     * @param mapper 数据 [D] 到 [RItemBinder] 的映射，支持一种数据对应多种 View
      */
     fun <D : Any> register(model: KClass<D>, mapper: RTypeMapper<D>) = apply {
         typePool.register(model, mapper)
@@ -130,14 +130,14 @@ class RAdapter<T> : RecyclerView.Adapter<ViewBindingHolder<*>>() {
     fun isEmpty() = dataList.isEmpty()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewBindingHolder<*> {
-        val viewBinder = typePool.getViewBinder(viewType)
-        viewBinder.adapter = this as RAdapter<Any>
-        return viewBinder.onCreateViewHolder(parent)
+        val itemBinder = typePool.getItemBinder(viewType)
+        itemBinder.adapter = this as RAdapter<Any>
+        return itemBinder.onCreateViewHolder(parent)
     }
 
     override fun onBindViewHolder(holder: ViewBindingHolder<*>, position: Int) {
         try {
-            holder.viewBinder.onBindInternal(holder.vb, dataList[position] as Any, position)
+            holder.itemBinder.onBindInternal(holder.vb, dataList[position] as Any, position)
         } catch (e: Throwable) {
             Log.e(TAG, "bind view error", e)
         }

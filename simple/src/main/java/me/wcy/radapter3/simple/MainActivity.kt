@@ -13,7 +13,7 @@ import me.wcy.radapter.simple.databinding.ViewHolderText1Binding
 import me.wcy.radapter.simple.databinding.ViewHolderText2Binding
 import me.wcy.radapter3.RAdapter
 import me.wcy.radapter3.RTypeMapper
-import me.wcy.radapter3.RViewBinder
+import me.wcy.radapter3.RItemBinder
 import kotlin.reflect.KClass
 
 class MainActivity : AppCompatActivity() {
@@ -39,12 +39,12 @@ class MainActivity : AppCompatActivity() {
         dataList.add(Text("太阿", 1))
 
         val adapter = RAdapter<Any>()
-        adapter.register(ImageViewBinder())
+        adapter.register(ImageItemBinder())
         adapter.register(Text::class, object : RTypeMapper<Text> {
-            val textViewBinder1 = TextViewBinder1()
-            val textViewBinder2 = TextViewBinder2()
+            val textViewBinder1 = TextItemBinder1()
+            val textViewBinder2 = TextItemBinder2()
 
-            override fun map(data: Text): RViewBinder<out ViewBinding, Text> {
+            override fun map(data: Text): RItemBinder<out ViewBinding, Text> {
                 return when (data.style) {
                     1 -> textViewBinder1
                     2 -> textViewBinder2
@@ -63,13 +63,13 @@ class MainActivity : AppCompatActivity() {
 
     data class Image(val resId: Int)
 
-    class ImageViewBinder : RViewBinder<ViewHolderImageBinding, Image>() {
+    class ImageItemBinder : RItemBinder<ViewHolderImageBinding, Image>() {
         override fun onBind(viewBinding: ViewHolderImageBinding, item: Image, position: Int) {
             viewBinding.image.setImageResource(item.resId)
         }
     }
 
-    class TextViewBinder1 : RViewBinder<ViewHolderText1Binding, Text>() {
+    class TextItemBinder1 : RItemBinder<ViewHolderText1Binding, Text>() {
         override fun onBind(viewBinding: ViewHolderText1Binding, item: Text, position: Int) {
             viewBinding.text1.text = item.text
         }
@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity() {
         override fun getViewBindingClazz(): KClass<*> = ViewHolderText1Binding::class
     }
 
-    class TextViewBinder2 : RViewBinder<ViewHolderText2Binding, Text>() {
+    class TextItemBinder2 : RItemBinder<ViewHolderText2Binding, Text>() {
         override fun onBind(viewBinding: ViewHolderText2Binding, item: Text, position: Int) {
             viewBinding.text2.text = item.text
             viewBinding.text2.setOnClickListener {

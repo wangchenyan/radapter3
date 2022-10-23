@@ -3,7 +3,7 @@ package me.wcy.radapter3
 import kotlin.reflect.KClass
 
 /**
- * 一个列表 item 的实体，包含数据类型和 ViewBinder
+ * 一个列表 item 的实体，包含数据类型 [T] 和视图绑定器 [RItemBinder]
  *
  * Created by wangchenyan on 2018/9/21.
  */

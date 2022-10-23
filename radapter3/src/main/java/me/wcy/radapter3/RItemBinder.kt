@@ -8,18 +8,18 @@ import kotlin.reflect.KClass
 /**
  * Created by wangchenyan.top on 2022/9/25.
  */
-abstract class RViewBinder<VB : ViewBinding, T> {
+abstract class RItemBinder<VB : ViewBinding, T> {
     private var viewBindingClazz: KClass<*>? = null
     lateinit var adapter: RAdapter<Any>
 
     /**
-     * 如果使用 [RTypeMapper] 映射 [RViewBinder]，请务必复写该方法！
+     * 如果使用 [RTypeMapper] 映射 [RItemBinder]，请务必复写该方法！
      */
     open fun getViewBindingClazz(): KClass<*> {
         if (viewBindingClazz == null) {
             throw IllegalStateException(
                 "viewBindingClazz can not be null!" +
-                        "\nIf you use 'RTypeMapper', place override 'getViewBindingClazz()' method from 'RViewBinder'" +
+                        "\nIf you use 'RTypeMapper', place override 'getViewBindingClazz()' method from 'RItemBinder'" +
                         ", and provide ViewBinding class"
             )
         }

@@ -1,5 +1,6 @@
 package me.wcy.radapter3
 
+import androidx.recyclerview.widget.RecyclerView
 import kotlin.reflect.KClass
 
 /**
@@ -9,7 +10,7 @@ import kotlin.reflect.KClass
  */
 internal class RTypePool {
     private val typeList by lazy { mutableListOf<RType<*>>() }
-    private val viewBinderList: MutableList<RViewBinder<*, *>> by lazy {
+    private val itemBinderList: MutableList<RItemBinder<*, *>> by lazy {
         mutableListOf()
     }
 
@@ -30,7 +31,7 @@ internal class RTypePool {
     }
 
     /**
-     * 根据数据获取 item 实体对应的 ViewBinder 位置，即 Adapter.getItemViewType()
+     * 根据数据获取 item 实体对应的 [RItemBinder] 位置，即 [RecyclerView.Adapter.getItemViewType]
      */
     fun getTypePosition(data: Any?): Int {
         if (data == null) {
@@ -56,20 +57,20 @@ internal class RTypePool {
         if (mapper == null) {
             return -1
         }
-        // TODO 避免多次创建 ViewBinder 实例
-        val viewBinder = mapper.map(data)
-        var exist = viewBinderList.find { it.javaClass == viewBinder.javaClass }
+        // TODO 避免多次创建 ItemBinder 实例
+        val itemBinder = mapper.map(data)
+        var exist = itemBinderList.find { it.javaClass == itemBinder.javaClass }
         if (exist == null) {
-            viewBinderList.add(viewBinder)
-            exist = viewBinder
+            itemBinderList.add(itemBinder)
+            exist = itemBinder
         }
-        return viewBinderList.indexOf(exist)
+        return itemBinderList.indexOf(exist)
     }
 
     /**
-     * 获取 ViewBinder
+     * 获取 [RItemBinder]
      */
-    fun getViewBinder(viewType: Int): RViewBinder<*, *> {
-        return viewBinderList[viewType]
+    fun getItemBinder(viewType: Int): RItemBinder<*, *> {
+        return itemBinderList[viewType]
     }
 }
