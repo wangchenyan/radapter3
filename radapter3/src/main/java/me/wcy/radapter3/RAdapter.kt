@@ -47,6 +47,9 @@ class RAdapter<T> : RecyclerView.Adapter<ViewBindingHolder<*>>() {
      *
      * @param model 数据类型
      * @param mapper 数据 [D] 到 [RItemBinder] 的映射，支持一种数据对应多种 View
+     *
+     * 注意：
+     *   - 使用 [RTypeMapper] 映射 [RItemBinder]，请务必复写 [RItemBinder.getViewBindingClazz] 方法！
      */
     fun <D : Any> register(model: KClass<D>, mapper: RTypeMapper<D>) = apply {
         typePool.register(model, mapper)

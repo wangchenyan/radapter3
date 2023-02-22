@@ -13,7 +13,8 @@ abstract class RItemBinder<VB : ViewBinding, T> {
     lateinit var adapter: RAdapter<Any>
 
     /**
-     * 如果使用 [RTypeMapper] 映射 [RItemBinder]，请务必复写该方法！
+     * 注意：
+     *   - 如果使用 [RTypeMapper] 映射 [RItemBinder]，请务必复写该方法！
      */
     open fun getViewBindingClazz(): KClass<*> {
         if (viewBindingClazz == null) {
