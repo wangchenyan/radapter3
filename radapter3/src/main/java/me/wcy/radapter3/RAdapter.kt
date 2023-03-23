@@ -2,15 +2,17 @@ package me.wcy.radapter3
 
 import android.util.Log
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
+import androidx.annotation.MainThread
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.viewbinding.ViewBinding
 import kotlin.reflect.KClass
 
 /**
  * 支持多种类型的 RecyclerView Adapter
  */
-class RAdapter<T> : RecyclerView.Adapter<ViewBindingHolder<*>>() {
-    private val dataList: MutableList<T> = mutableListOf()
+class RAdapter<T>(diffCallback: DiffUtil.ItemCallback<T> = DefaultDiffCallback()) :
+    ListAdapter<T, ViewBindingHolder<*>>(diffCallback) {
     private val typePool by lazy { RTypePool() }
 
     /**
@@ -59,78 +61,91 @@ class RAdapter<T> : RecyclerView.Adapter<ViewBindingHolder<*>>() {
      * 获取数据集
      */
     fun getDataList(): List<T> {
-        return dataList
+        return currentList
     }
 
     /**
      * 刷新数据集
      */
+    @MainThread
     fun refresh(list: List<T>) {
-        dataList.clear()
-        dataList.addAll(list)
-        notifyDataSetChanged()
+        val newList = ArrayList(list)
+        submitList(newList)
     }
 
     /**
      * 添加数据并刷新视图
      */
+    @MainThread
     fun add(item: T, index: Int? = null) {
-        if (index != null && index !in 0..dataList.size) {
-            Log.w(TAG, "下标越界，size: ${dataList.size}, index: $index")
+        val currentList = currentList
+        if (index != null && index !in 0..currentList.size) {
+            Log.w(TAG, "下标越界，size: ${currentList.size}, index: $index")
             return
         }
-        val position = index ?: dataList.size
-        dataList.add(position, item)
-        notifyItemInserted(position)
+        val newList = ArrayList(currentList)
+        val position = index ?: newList.size
+        newList.add(position, item)
+        submitList(newList)
     }
 
     /**
      * 添加数据集并刷新视图
      */
+    @MainThread
     fun addAll(list: List<T>) {
-        dataList.addAll(list)
-        notifyDataSetChanged()
+        val newList = ArrayList(currentList).apply {
+            addAll(list)
+        }
+        submitList(newList)
     }
 
     /**
      * 移除数据并刷新视图
      */
+    @MainThread
     fun remove(position: Int) {
-        if (position !in 0 until dataList.size) {
-            Log.w(TAG, "下标越界，size: ${dataList.size}, position: $position")
+        val currentList = currentList
+        if (position !in 0 until currentList.size) {
+            Log.w(TAG, "下标越界，size: ${currentList.size}, position: $position")
             return
         }
-        dataList.removeAt(position)
-        notifyItemRemoved(position)
+        val newList = ArrayList(currentList)
+        newList.removeAt(position)
+        submitList(newList)
     }
 
     /**
      * 移除数据并刷新视图
      */
+    @MainThread
     fun remove(item: T) {
-        remove(dataList.indexOf(item))
+        remove(currentList.indexOf(item))
     }
 
     /**
      * 更新数据并刷新视图
      */
+    @MainThread
     fun change(item: T, position: Int) {
-        if (position !in 0 until dataList.size) {
-            Log.w(TAG, "下标越界，size: ${dataList.size}, position: $position")
-            return
-        }
         if (item == null) {
             Log.w(TAG, "item is null")
             return
         }
-        dataList[position] = item
-        notifyItemChanged(position)
+        val currentList = currentList
+        if (position !in 0 until currentList.size) {
+            Log.w(TAG, "下标越界，size: ${currentList.size}, position: $position")
+            return
+        }
+        val newList = ArrayList(currentList)
+        newList[position] = item
+        submitList(newList)
     }
 
     /**
      * 数据是否为空
      */
-    fun isEmpty() = dataList.isEmpty()
+    fun isEmpty() = currentList.isEmpty()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewBindingHolder<*> {
         val itemBinder = typePool.getItemBinder(viewType)
@@ -140,18 +155,14 @@ class RAdapter<T> : RecyclerView.Adapter<ViewBindingHolder<*>>() {
 
     override fun onBindViewHolder(holder: ViewBindingHolder<*>, position: Int) {
         try {
-            holder.itemBinder.onBindInternal(holder.vb, dataList[position] as Any, position)
+            holder.itemBinder.onBindInternal(holder.vb, currentList[position] as Any, position)
         } catch (e: Throwable) {
             Log.e(TAG, "bind view error", e)
         }
     }
 
-    override fun getItemCount(): Int {
-        return dataList.size
-    }
-
     override fun getItemViewType(position: Int): Int {
-        val data = dataList[position]
+        val data = currentList[position]
         val type = typePool.getTypePosition(data)
         if (type < 0) {
             throw IllegalStateException("can not find view type for ${data}, have you register the data?")
