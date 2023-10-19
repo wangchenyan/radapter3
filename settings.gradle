@@ -1,1 +1,2 @@
-include ':simple', ':radapter3'
+include ":simple"
+include ":radapter3"

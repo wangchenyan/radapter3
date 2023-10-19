@@ -9,7 +9,7 @@ import kotlin.reflect.KClass
 /**
  * 支持多种类型的 RecyclerView Adapter
  */
-class RAdapter<T> : RecyclerView.Adapter<ViewBindingHolder<*>>() {
+open class RAdapter<T> : RecyclerView.Adapter<ViewBindingHolder<*>>() {
     private val dataList: MutableList<T> = mutableListOf()
     private val typePool by lazy { RTypePool() }
 
