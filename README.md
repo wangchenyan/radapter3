@@ -1,6 +1,7 @@
 # radapter3
 
 [![](https://jitpack.io/v/wangchenyan/radapter3.svg)](https://jitpack.io/#wangchenyan/radapter3)
+
 使用 radapter，你可以方便的构造多种类型的列表视图。
 
 ![](https://raw.githubusercontent.com/wangchenyan/radapter3/master/art/recycler-view.jpg)
@@ -9,6 +10,7 @@
 
 当前 ViewBinding 很受欢迎，我们也要紧跟潮流呀，这不，radapter3 来了，支持 ViewBinding，并且利用函数内联，简化了数据注册，
 使用更加简单。
+
 由于 API 和旧版本不兼容，干脆新开一个仓库。如果不想用 ViewBinding，还想用老版本，[传送门](https://github.com/wangchenyan/radapter) 
 
 ## 使用
